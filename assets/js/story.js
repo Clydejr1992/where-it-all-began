@@ -5,80 +5,117 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!form) return;
 
 
+    /* SUPABASE */
+
+    const SUPABASE_URL =
+        "https://rdqtwuksydmyxgnxvipl.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+
+    /* FORM ELEMENTS */
+
     const steps = [
         ...form.querySelectorAll("fieldset")
     ];
 
-    const next = document.getElementById("nextBtn");
-    const prev = document.getElementById("prevBtn");
-    const save = document.getElementById("saveBtn");
+    const next =
+        document.getElementById("nextBtn");
 
-    const bar = document.getElementById("progressBar");
-    const label = document.getElementById("stepLabel");
-    const pct = document.getElementById("progressPercent");
+    const prev =
+        document.getElementById("prevBtn");
 
-    const status = document.getElementById("draftStatus");
+    const save =
+        document.getElementById("saveBtn");
 
-    const topics = document.getElementById("storyTopics");
+    const bar =
+        document.getElementById("progressBar");
+
+    const label =
+        document.getElementById("stepLabel");
+
+    const pct =
+        document.getElementById("progressPercent");
+
+    const status =
+        document.getElementById("draftStatus");
+
+
+    const topics =
+        document.getElementById("storyTopics");
 
 
     let current = 0;
 
-    const storageKey = "whereItAllBeganStoryDraft";
+    const storageKey =
+        "whereItAllBeganStoryDraft";
 
 
-    /* LOAD SAVED DRAFT */
+    /* LOAD LOCAL DRAFT */
 
     try {
 
-        const saved = JSON.parse(
-            localStorage.getItem(storageKey) || "{}"
-        );
+        const saved =
+            JSON.parse(
+                localStorage.getItem(storageKey) || "{}"
+            );
 
 
-        Object.entries(saved).forEach(([name, value]) => {
+        Object.entries(saved).forEach(
+            ([name, value]) => {
 
-            const element = form.elements[name];
+                const element =
+                    form.elements[name];
 
-            if (!element) return;
-
-
-            /*
-             * MULTIPLE TOPICS
-             */
-
-            if (name === "topics" && topics) {
-
-                const selectedTopics =
-                    Array.isArray(value)
-                        ? value
-                        : [value];
+                if (!element) return;
 
 
-                [...topics.options].forEach(option => {
+                if (
+                    name === "topics" &&
+                    topics
+                ) {
 
-                    option.selected =
-                        selectedTopics.includes(option.value);
+                    const selectedTopics =
+                        Array.isArray(value)
+                            ? value
+                            : [value];
 
-                });
+
+                    [
+                        ...topics.options
+                    ].forEach(option => {
+
+                        option.selected =
+                            selectedTopics.includes(
+                                option.value
+                            );
+
+                    });
 
 
-                return;
+                    return;
+
+                }
+
+
+                element.value = value;
 
             }
-
-
-            /*
-             * NORMAL FIELDS
-             */
-
-            element.value = value;
-
-        });
+        );
 
     } catch (error) {
 
-        console.log("No saved draft found.");
+        console.log(
+            "No saved draft found."
+        );
 
     }
 
@@ -90,37 +127,35 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = {};
 
 
-        [...form.elements].forEach(element => {
+        [...form.elements].forEach(
+            element => {
 
-            if (!element.name) return;
+                if (!element.name)
+                    return;
 
 
-            /*
-             * MULTIPLE SELECT TOPICS
-             */
+                if (
+                    element.name === "topics" &&
+                    element.multiple
+                ) {
 
-            if (
-                element.name === "topics" &&
-                element.multiple
-            ) {
+                    data[element.name] =
+                        [
+                            ...element.selectedOptions
+                        ].map(
+                            option => option.value
+                        );
+
+                    return;
+
+                }
+
 
                 data[element.name] =
-                    [...element.selectedOptions]
-                        .map(option => option.value);
-
-                return;
+                    element.value;
 
             }
-
-
-            /*
-             * NORMAL FIELDS
-             */
-
-            data[element.name] =
-                element.value;
-
-        });
+        );
 
 
         return data;
@@ -128,27 +163,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* SAVE DRAFT */
+    /* SAVE LOCAL DRAFT */
 
-    function saveDraft(message) {
+    function saveLocalDraft(message) {
 
         try {
 
             localStorage.setItem(
                 storageKey,
-                JSON.stringify(collect())
+                JSON.stringify(
+                    collect()
+                )
             );
 
 
             if (status) {
-                status.textContent = message;
-            }
 
+                status.textContent =
+                    message;
+
+            }
 
         } catch (error) {
 
             console.log(
-                "Unable to save draft.",
+                "Unable to save local draft.",
                 error
             );
 
@@ -161,12 +200,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function render() {
 
-        steps.forEach((step, index) => {
+        steps.forEach(
+            (step, index) => {
 
-            step.hidden =
-                index !== current;
+                step.hidden =
+                    index !== current;
 
-        });
+            }
+        );
 
 
         const number =
@@ -175,7 +216,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const percent =
             Math.round(
-                number / steps.length * 100
+                number /
+                steps.length *
+                100
             );
 
 
@@ -196,34 +239,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         next.hidden =
-            current === steps.length - 1;
+            current ===
+            steps.length - 1;
 
 
         save.hidden =
-            current !== steps.length - 1;
+            current !==
+            steps.length - 1;
 
     }
 
 
-    /* NEXT BUTTON */
+    /* NEXT */
 
     next.onclick = () => {
 
-        if (current < steps.length - 1) {
+        saveLocalDraft(
+            "Draft saved on this device."
+        );
 
-            /*
-             * Save before moving
-             */
 
-            saveDraft(
-                "Draft saved on this device."
-            );
-
+        if (
+            current <
+            steps.length - 1
+        ) {
 
             current++;
 
             render();
-
 
             window.scrollTo({
                 top: 0,
@@ -235,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    /* BACK BUTTON */
+    /* BACK */
 
     prev.onclick = () => {
 
@@ -245,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             render();
 
-
             window.scrollTo({
                 top: 0,
                 behavior: "smooth"
@@ -256,52 +298,133 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    /* AUTOMATICALLY SAVE DRAFT */
+    /* AUTOMATIC LOCAL SAVE */
 
-    form.addEventListener("input", () => {
+    form.addEventListener(
+        "input",
+        () => {
 
-        saveDraft(
-            "Draft saved on this device."
-        );
+            saveLocalDraft(
+                "Draft saved on this device."
+            );
 
-    });
-
-
-    /* CATEGORY / TOPIC CHANGES */
-
-    form.addEventListener("change", () => {
-
-        saveDraft(
-            "Draft saved on this device."
-        );
-
-    });
+        }
+    );
 
 
-    /* FINAL SAVE BUTTON */
+    form.addEventListener(
+        "change",
+        () => {
 
-    form.onsubmit = (event) => {
+            saveLocalDraft(
+                "Draft saved on this device."
+            );
+
+        }
+    );
+
+
+    /* SAVE TO SUPABASE */
+
+    form.onsubmit = async (event) => {
 
         event.preventDefault();
 
 
+        const data =
+            collect();
+
+
+        save.disabled = true;
+
+        save.textContent =
+            "Saving...";
+
+
+        status.textContent =
+            "Saving your story...";
+
+
         try {
+
+            /*
+             * TEMPORARY TEST:
+             * We are saving the story as a draft.
+             */
+
+            const {
+                data: result,
+                error
+            } =
+                await supabaseClient
+                    .from("stories")
+                    .insert({
+                        title:
+                            data.name
+                                ? `${data.name}'s Story`
+                                : "Untitled Story",
+
+                        content:
+                            JSON.stringify(data),
+
+                        category:
+                            data.category || null,
+
+                        topics:
+                            data.topics || [],
+
+                        status:
+                            "draft"
+                    })
+                    .select()
+                    .single();
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+
+            /*
+             * Keep a local copy too.
+             */
 
             localStorage.setItem(
                 storageKey,
-                JSON.stringify(collect())
+                JSON.stringify(data)
             );
 
 
             status.textContent =
-                "Your story draft is saved on this device. Public submission is not connected yet.";
+                "Your story draft has been saved successfully.";
+
+
+            console.log(
+                "Supabase story:",
+                result
+            );
+
 
         } catch (error) {
 
+            console.error(
+                "Supabase save error:",
+                error
+            );
+
+
             status.textContent =
-                "Your browser could not save the draft.";
+                "We couldn't save your story to the server yet. Your local draft is still saved on this device.";
 
         }
+
+
+        save.disabled = false;
+
+        save.textContent =
+            "Save My Story Draft";
 
     };
 

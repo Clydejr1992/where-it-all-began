@@ -1,0 +1,1 @@
+const m=document.getElementById('menu');const l=document.getElementById('links');m.addEventListener('click',()=>l.style.display=l.style.display==='block'?'none':'block');

@@ -19,10 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const status = document.getElementById("draftStatus");
 
+    const topics = document.getElementById("storyTopics");
+
 
     let current = 0;
 
-    const key = "whereItAllBeganStoryDraft";
+    const storageKey = "whereItAllBeganStoryDraft";
 
 
     /* LOAD SAVED DRAFT */
@@ -30,14 +32,47 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
 
         const saved = JSON.parse(
-            localStorage.getItem(key) || "{}"
+            localStorage.getItem(storageKey) || "{}"
         );
 
-        Object.entries(saved).forEach(([key, value]) => {
 
-            if (form.elements[key]) {
-                form.elements[key].value = value;
+        Object.entries(saved).forEach(([name, value]) => {
+
+            const element = form.elements[name];
+
+            if (!element) return;
+
+
+            /*
+             * MULTIPLE TOPICS
+             */
+
+            if (name === "topics" && topics) {
+
+                const selectedTopics =
+                    Array.isArray(value)
+                        ? value
+                        : [value];
+
+
+                [...topics.options].forEach(option => {
+
+                    option.selected =
+                        selectedTopics.includes(option.value);
+
+                });
+
+
+                return;
+
             }
+
+
+            /*
+             * NORMAL FIELDS
+             */
+
+            element.value = value;
 
         });
 
@@ -54,17 +89,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = {};
 
-        [
-            ...form.elements
-        ].forEach(element => {
 
-            if (element.name) {
-                data[element.name] = element.value;
+        [...form.elements].forEach(element => {
+
+            if (!element.name) return;
+
+
+            /*
+             * MULTIPLE SELECT TOPICS
+             */
+
+            if (
+                element.name === "topics" &&
+                element.multiple
+            ) {
+
+                data[element.name] =
+                    [...element.selectedOptions]
+                        .map(option => option.value);
+
+                return;
+
             }
+
+
+            /*
+             * NORMAL FIELDS
+             */
+
+            data[element.name] =
+                element.value;
 
         });
 
+
         return data;
+
+    }
+
+
+    /* SAVE DRAFT */
+
+    function saveDraft(message) {
+
+        try {
+
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(collect())
+            );
+
+
+            if (status) {
+                status.textContent = message;
+            }
+
+
+        } catch (error) {
+
+            console.log(
+                "Unable to save draft.",
+                error
+            );
+
+        }
+
     }
 
 
@@ -74,16 +163,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         steps.forEach((step, index) => {
 
-            step.hidden = index !== current;
+            step.hidden =
+                index !== current;
 
         });
 
 
-        const number = current + 1;
+        const number =
+            current + 1;
 
-        const percent = Math.round(
-            number / steps.length * 100
-        );
+
+        const percent =
+            Math.round(
+                number / steps.length * 100
+            );
 
 
         label.textContent =
@@ -118,11 +211,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (current < steps.length - 1) {
 
+            /*
+             * Save before moving
+             */
+
+            saveDraft(
+                "Draft saved on this device."
+            );
+
+
             current++;
 
             render();
 
-            window.scrollTo(0, 0);
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
         }
 
@@ -139,7 +245,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             render();
 
-            window.scrollTo(0, 0);
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
         }
 
@@ -150,23 +260,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("input", () => {
 
-        try {
+        saveDraft(
+            "Draft saved on this device."
+        );
 
-            localStorage.setItem(
-                key,
-                JSON.stringify(collect())
-            );
+    });
 
-            status.textContent =
-                "Draft saved on this device.";
 
-        } catch (error) {
+    /* CATEGORY / TOPIC CHANGES */
 
-            console.log(
-                "Unable to save draft."
-            );
+    form.addEventListener("change", () => {
 
-        }
+        saveDraft(
+            "Draft saved on this device."
+        );
 
     });
 
@@ -181,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             localStorage.setItem(
-                key,
+                storageKey,
                 JSON.stringify(collect())
             );
 

@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description"
+        content="Tell your story with guided questions.">
+
+    <title>Tell Your Story | Where It All Began</title>
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="container nav-wrap">
+
+        <a class="brand" href="index.html">
+            <span>WHERE IT ALL</span>
+            <strong>BEGAN</strong>
+        </a>
+
+        <button
+            class="menu-toggle"
+            aria-label="Open menu"
+            aria-expanded="false">
+            ☰
+        </button>
+
+        <nav class="nav">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a class="active" href="tell-your-story.html">
+                Tell Your Story
+            </a>
+
+            <a href="interviews.html">
+                Live Interviews
+            </a>
+
+            <a href="stories.html">
+                Stories
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a class="nav-button" href="contact.html">
+                Contact
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main>
+
+<section class="page-hero">
+
+    <div class="container narrow">
+
+        <p class="eyebrow">
+            YOUR STORY STARTS HERE
+        </p>
+
+        <h1>
+            Tell Your Story
+        </h1>
+
+        <p>
+            Take your time. There are no perfect answers.
+            Write as much or as little as feels right.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container form-layout">
+
+
+        <div class="progress">
+
+            <div>
+                <span id="stepLabel"></span>
+                <span id="progressPercent"></span>
+            </div>
+
+            <div class="progress-bar">
+                <span id="progressBar"></span>
+            </div>
+
+        </div>
+
+
+        <form id="storyForm">
+
+
+            <!-- CHAPTER 1 -->
+
+            <fieldset>
+
+                <legend>
+                    About you
+                </legend>
+
+                <p class="form-intro">
+                    Let's start with the person behind the story.
+                </p>
+
+
+                <label>
+                    Your name
+
+                    <input
+                        name="name"
+                        autocomplete="name"
+                        placeholder="What should we call you?">
+
+                </label>
+
+
+                <label>
+                    Where do you call home?
+
+                    <input
+                        name="home"
+                        placeholder="Town, state, or a place that feels like home">
+
+                </label>
+
+
+                <label>
+                    How would you describe yourself today?
+
+                    <textarea
+                        name="today"
+                        rows="5"></textarea>
+
+                </label>
+
+            </fieldset>
+
+
+            <!-- CHAPTER 2 -->
+
+            <fieldset hidden>
+
+                <legend>
+                    Where It Began
+                </legend>
+
+                <p class="form-intro">
+                    Think about the earliest place, memory,
+                    or season that feels important.
+                </p>
+
+
+                <label>
+                    Where did your story begin?
+
+                    <textarea
+                        name="began"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    What is one memory you can still picture clearly?
+
+                    <textarea
+                        name="memory"
+                        rows="5"></textarea>
+
+                </label>
+
+            </fieldset>
+
+
+            <!-- CHAPTER 3 -->
+
+            <fieldset hidden>
+
+                <legend>
+                    The people who shaped you
+                </legend>
+
+                <p class="form-intro">
+                    Every life is connected to other lives.
+                </p>
+
+
+                <label>
+                    Who made a lasting difference in your life?
+
+                    <textarea
+                        name="people"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    What did they teach you?
+
+                    <textarea
+                        name="lessons"
+                        rows="5"></textarea>
+
+                </label>
+
+            </fieldset>
+
+
+            <!-- CHAPTER 4 -->
+
+            <fieldset hidden>
+
+                <legend>
+                    The road you traveled
+                </legend>
+
+                <p class="form-intro">
+                    Life has hard chapters and beautiful ones.
+                </p>
+
+
+                <label>
+                    What challenge changed you?
+
+                    <textarea
+                        name="challenge"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    What are you most proud of making it through?
+
+                    <textarea
+                        name="proud"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    What moments changed the direction of your life?
+
+                    <textarea
+                        name="turning"
+                        rows="5"></textarea>
+
+                </label>
+
+            </fieldset>
+
+
+            <!-- CHAPTER 5 -->
+
+            <fieldset hidden>
+
+                <legend>
+                    Looking back
+                </legend>
+
+                <p class="form-intro">
+                    Leave something meaningful for the people
+                    who come after you.
+                </p>
+
+
+                <label>
+                    What do you want your family to remember?
+
+                    <textarea
+                        name="remember"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    What would you tell your younger self?
+
+                    <textarea
+                        name="younger"
+                        rows="5"></textarea>
+
+                </label>
+
+
+                <label>
+                    Is there anything else you want to say?
+
+                    <textarea
+                        name="anything"
+                        rows="6"></textarea>
+
+                </label>
+
+            </fieldset>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="button button-light"
+                    id="prevBtn">
+                    Back
+                </button>
+
+
+                <button
+                    type="button"
+                    class="button"
+                    id="nextBtn">
+                    Next
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="button"
+                    id="saveBtn"
+                    hidden>
+                    Save My Story Draft
+                </button>
+
+            </div>
+
+
+            <p
+                id="draftStatus"
+                class="status"
+                aria-live="polite">
+            </p>
+
+        </form>
+
+
+        <div class="note">
+
+            <strong>Important:</strong>
+
+            This version saves your draft only in this
+            browser. It does not send or publish your story yet.
+
+            Secure database and publishing controls should be
+            connected before public submissions go live.
+
+        </div>
+
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="container copyright">
+
+        © <span data-year></span>
+        Where It All Began.
+
+        <a href="privacy.html">
+            Privacy
+        </a>
+
+        ·
+
+        <a href="terms.html">
+            Terms
+        </a>
+
+    </div>
+
+</footer>
+
+
+<script src="assets/js/site.js"></script>
+
+<script src="assets/js/story.js"></script>
+
+</body>
+
+</html>

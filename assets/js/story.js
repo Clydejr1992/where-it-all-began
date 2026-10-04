@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const status =
         document.getElementById("draftStatus");
 
-
     const topics =
         document.getElementById("storyTopics");
 
@@ -347,10 +346,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            /*
-             * TEMPORARY TEST:
-             * We are saving the story as a draft.
-             */
+            /* GET THE CURRENT SIGNED-IN USER */
+
+            const {
+                data: userData,
+                error: userError
+            } =
+                await supabaseClient.auth.getUser();
+
+
+            if (userError) {
+
+                throw userError;
+
+            }
+
+
+            const user =
+                userData.user;
+
+
+            if (!user) {
+
+                throw new Error(
+                    "You must be signed in before saving your story."
+                );
+
+            }
+
+
+            /* SAVE STORY */
 
             const {
                 data: result,
@@ -359,6 +384,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 await supabaseClient
                     .from("stories")
                     .insert({
+
+                        author_id:
+                            user.id,
+
                         title:
                             data.name
                                 ? `${data.name}'s Story`
@@ -375,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         status:
                             "draft"
+
                     })
                     .select()
                     .single();
@@ -387,9 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /*
-             * Keep a local copy too.
-             */
+            /* KEEP LOCAL COPY TOO */
 
             localStorage.setItem(
                 storageKey,

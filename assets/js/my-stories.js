@@ -142,10 +142,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ).toLocaleDateString()}`;
 
 
+            // Read Story button
+            const readButton =
+                document.createElement("a");
+
+            readButton.href =
+                `view-story.html?id=${encodeURIComponent(story.id)}`;
+
+            readButton.className =
+                "button";
+
+            readButton.textContent =
+                "Read Story";
+
+
             card.appendChild(title);
             card.appendChild(category);
             card.appendChild(status);
             card.appendChild(date);
+            card.appendChild(readButton);
 
             storiesList.appendChild(card);
 
@@ -159,8 +174,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "click",
         async () => {
 
-            signOutBtn.disabled =
-                true;
+            signOutBtn.disabled = true;
 
             signOutBtn.textContent =
                 "Signing Out...";

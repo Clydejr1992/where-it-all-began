@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             SUPABASE_PUBLISHABLE_KEY
         );
 
+
     const loading =
         document.getElementById("loading");
 
@@ -28,27 +29,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("signOutBtn");
 
 
+    // Get the saved login session
     const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+        data: {
+            session
+        }
+    } = await supabaseClient.auth.getSession();
+
+
+    const user = session?.user;
 
 
     if (!user) {
-        window.location.href = "login.html";
+
+        loading.textContent =
+            "You are not signed in. Taking you to Sign In...";
+
+        setTimeout(() => {
+
+            window.location.href =
+                "login.html";
+
+        }, 1000);
+
         return;
     }
 
 
+    // Load this user's stories
     const {
         data: stories,
         error
-    } = await supabaseClient
-        .from("stories")
-        .select("*")
-        .eq("author_id", user.id)
-        .order("created_at", {
-            ascending: false
-        });
+    } =
+        await supabaseClient
+            .from("stories")
+            .select("*")
+            .eq("author_id", user.id)
+            .order("created_at", {
+                ascending: false
+            });
 
 
     loading.hidden = true;
@@ -71,71 +90,77 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         emptyMessage.hidden = false;
 
-        return;
+    } else {
+
+        stories.forEach(story => {
+
+            const card =
+                document.createElement("article");
+
+            card.className =
+                "story-card";
+
+
+            const title =
+                document.createElement("h2");
+
+            title.textContent =
+                story.title || "Untitled Story";
+
+
+            const category =
+                document.createElement("p");
+
+            category.className =
+                "form-help";
+
+            category.textContent =
+                story.category
+                    ? `Category: ${story.category}`
+                    : "No category selected";
+
+
+            const status =
+                document.createElement("p");
+
+            status.className =
+                "form-help";
+
+            status.textContent =
+                `Status: ${story.status}`;
+
+
+            const date =
+                document.createElement("p");
+
+            date.className =
+                "form-help";
+
+            date.textContent =
+                `Saved: ${new Date(
+                    story.created_at
+                ).toLocaleDateString()}`;
+
+
+            card.appendChild(title);
+            card.appendChild(category);
+            card.appendChild(status);
+            card.appendChild(date);
+
+            storiesList.appendChild(card);
+
+        });
+
     }
 
 
-    stories.forEach(story => {
-
-        const card =
-            document.createElement("article");
-
-        card.className = "story-card";
-
-
-        const title =
-            document.createElement("h2");
-
-        title.textContent =
-            story.title || "Untitled Story";
-
-
-        const category =
-            document.createElement("p");
-
-        category.className = "form-help";
-
-        category.textContent =
-            story.category
-                ? `Category: ${story.category}`
-                : "No category selected";
-
-
-        const status =
-            document.createElement("p");
-
-        status.className = "form-help";
-
-        status.textContent =
-            `Status: ${story.status}`;
-
-
-        const date =
-            document.createElement("p");
-
-        date.className = "form-help";
-
-        date.textContent =
-            `Saved: ${new Date(
-                story.created_at
-            ).toLocaleDateString()}`;
-
-
-        card.appendChild(title);
-        card.appendChild(category);
-        card.appendChild(status);
-        card.appendChild(date);
-
-        storiesList.appendChild(card);
-
-    });
-
-
+    // Sign out
     signOutBtn.addEventListener(
         "click",
         async () => {
 
-            signOutBtn.disabled = true;
+            signOutBtn.disabled =
+                true;
 
             signOutBtn.textContent =
                 "Signing Out...";
@@ -151,7 +176,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 console.error(error);
 
-                signOutBtn.disabled = false;
+                signOutBtn.disabled =
+                    false;
 
                 signOutBtn.textContent =
                     "Sign Out";

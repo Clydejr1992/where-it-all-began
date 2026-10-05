@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "https://rdqtwuksydmyxgnxvipl.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
+        "YOUR_PUBLISHABLE_KEY_HERE";
 
     const supabaseClient =
         window.supabase.createClient(
@@ -28,21 +28,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("signOutBtn");
 
 
-    // Check whether the visitor is signed in
     const {
         data: { user }
     } = await supabaseClient.auth.getUser();
 
 
     if (!user) {
-
         window.location.href = "login.html";
-
         return;
     }
 
 
-    // Load this user's stories
     const {
         data: stories,
         error
@@ -97,8 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const category =
             document.createElement("p");
 
-        category.className =
-            "form-help";
+        category.className = "form-help";
 
         category.textContent =
             story.category
@@ -109,8 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const status =
             document.createElement("p");
 
-        status.className =
-            "form-help";
+        status.className = "form-help";
 
         status.textContent =
             `Status: ${story.status}`;
@@ -119,8 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const date =
             document.createElement("p");
 
-        date.className =
-            "form-help";
+        date.className = "form-help";
 
         date.textContent =
             `Saved: ${new Date(
@@ -138,7 +131,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 
-    // Sign out
     signOutBtn.addEventListener(
         "click",
         async () => {

@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const SUPABASE_URL =
         "https://rdqtwuksydmyxgnxvipl.supabase.co";
 
+
     const SUPABASE_PUBLISHABLE_KEY =
         "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
 
@@ -25,145 +26,177 @@ document.addEventListener("DOMContentLoaded", () => {
     function getCredentials() {
 
         return {
+
             email:
-                document.getElementById("email").value.trim(),
+                document
+                    .getElementById("email")
+                    .value
+                    .trim(),
 
             password:
-                document.getElementById("password").value
+                document
+                    .getElementById("password")
+                    .value
+
         };
 
     }
 
 
-    signInBtn.addEventListener("click", async (event) => {
+    // SIGN IN
+    signInBtn.addEventListener(
+        "click",
+        async (event) => {
 
-        event.preventDefault();
-
-        const { email, password } =
-            getCredentials();
-
-        if (!email || !password) {
-
-            status.textContent =
-                "Please enter your email and password.";
-
-            return;
-
-        }
+            event.preventDefault();
 
 
-        signInBtn.disabled = true;
-
-        status.textContent =
-            "Signing in...";
-
-
-        try {
-
-            const { error } =
-                await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
+            const {
+                email,
+                password
+            } = getCredentials();
 
 
-            if (error) {
-                throw error;
+            if (!email || !password) {
+
+                status.textContent =
+                    "Please enter your email and password.";
+
+                return;
             }
 
 
-            status.textContent =
-                "You are signed in. Taking you to your story...";
-
-
-            window.location.href =
-                "tell-your-story.html";
-
-
-        } catch (error) {
-
-            console.error(error);
+            signInBtn.disabled = true;
 
             status.textContent =
-                error.message ||
-                "Unable to sign in.";
-
-        }
+                "Signing in...";
 
 
-        signInBtn.disabled = false;
+            try {
 
-    });
+                const {
+                    error
+                } =
+                    await supabaseClient.auth
+                        .signInWithPassword({
 
+                            email,
+                            password
 
-    signUpBtn.addEventListener("click", async () => {
-
-        const { email, password } =
-            getCredentials();
-
-
-        if (!email || !password) {
-
-            status.textContent =
-                "Please enter an email and password first.";
-
-            return;
-
-        }
+                        });
 
 
-        signUpBtn.disabled = true;
+                if (error) {
+                    throw error;
+                }
 
-        status.textContent =
-            "Creating your account...";
-
-
-        try {
-
-            const { data, error } =
-                await supabaseClient.auth.signUp({
-                    email,
-                    password
-                });
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            if (
-                data.user &&
-                !data.session
-            ) {
 
                 status.textContent =
-                    "Account created. Check your email to confirm your account, then come back and sign in.";
+                    "You are signed in. Taking you to your stories...";
 
-            } else {
 
-                status.textContent =
-                    "Account created successfully. You can now tell your story.";
-
+                // SEND USER TO THEIR STORIES
                 window.location.href =
-                    "tell-your-story.html";
+                    "my-stories.html";
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    error.message ||
+                    "Unable to sign in.";
 
             }
 
 
-        } catch (error) {
-
-            console.error(error);
-
-            status.textContent =
-                error.message ||
-                "Unable to create your account.";
+            signInBtn.disabled = false;
 
         }
+    );
 
 
-        signUpBtn.disabled = false;
+    // CREATE ACCOUNT
+    signUpBtn.addEventListener(
+        "click",
+        async () => {
 
-    });
+            const {
+                email,
+                password
+            } = getCredentials();
+
+
+            if (!email || !password) {
+
+                status.textContent =
+                    "Please enter an email and password first.";
+
+                return;
+            }
+
+
+            signUpBtn.disabled = true;
+
+            status.textContent =
+                "Creating your account...";
+
+
+            try {
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient.auth
+                        .signUp({
+
+                            email,
+                            password
+
+                        });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (
+                    data.user &&
+                    !data.session
+                ) {
+
+                    status.textContent =
+                        "Account created. Check your email to confirm your account, then come back and sign in.";
+
+                } else {
+
+                    status.textContent =
+                        "Account created successfully. Taking you to your stories...";
+
+
+                    window.location.href =
+                        "my-stories.html";
+
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    error.message ||
+                    "Unable to create your account.";
+
+            }
+
+
+            signUpBtn.disabled = false;
+
+        }
+    );
 
 });

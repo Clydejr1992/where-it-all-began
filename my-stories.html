@@ -1,123 +1,224 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+document.addEventListener("DOMContentLoaded", async () => {
 
-    <title>My Stories | Where It All Began</title>
+    const SUPABASE_URL =
+        "https://rdqtwuksydmyxgnxvipl.supabase.co";
 
-    <link rel="stylesheet" href="assets/css/styles.css">
-</head>
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
 
-<body>
-
-<header class="site-header">
-    <div class="container header-inner">
-
-        <a href="index.html" class="site-logo">
-            Where It All Began
-        </a>
-
-        <nav class="site-nav">
-            <a href="index.html">Home</a>
-            <a href="tell-your-story.html">Tell Your Story</a>
-            <a href="my-stories.html">My Stories</a>
-            <a href="stories.html">Stories</a>
-        </nav>
-
-    </div>
-</header>
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
 
 
-<main>
+    const loading =
+        document.getElementById("loading");
 
-<section class="page-hero">
-    <div class="container">
+    const storiesList =
+        document.getElementById("storiesList");
 
-        <p class="eyebrow">Your memories. Your story.</p>
+    const emptyMessage =
+        document.getElementById("emptyMessage");
 
-        <h1>My Stories</h1>
+    const errorMessage =
+        document.getElementById("errorMessage");
 
-        <p>
-            View the stories and drafts you have saved.
-        </p>
-
-    </div>
-</section>
-
-
-<section class="section">
-
-    <div class="container narrow">
-
-        <div id="loading">
-            Loading your stories...
-        </div>
-
-        <div id="storiesList"></div>
-
-        <p
-            id="emptyMessage"
-            class="form-help"
-            hidden
-        >
-            You haven't saved any stories yet.
-        </p>
-
-        <p
-            id="errorMessage"
-            class="form-help"
-            hidden
-        ></p>
-
-        <div class="form-actions">
-
-            <a
-                href="tell-your-story.html"
-                class="button"
-            >
-                Tell a New Story
-            </a>
-
-            <button
-                type="button"
-                class="button button-light"
-                id="signOutBtn"
-            >
-                Sign Out
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-</main>
+    const signOutBtn =
+        document.getElementById("signOutBtn");
 
 
-<footer class="site-footer">
-
-    <div class="container">
-
-        <p>
-            © 2026 Where It All Began
-        </p>
-
-        <p>
-            <a href="privacy.html">Privacy</a>
-            &nbsp; | &nbsp;
-            <a href="terms.html">Terms</a>
-        </p>
-
-    </div>
-
-</footer>
+    // Get the saved login session
+    const {
+        data: {
+            session
+        }
+    } = await supabaseClient.auth.getSession();
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    const user = session?.user;
 
-<script src="assets/js/my-stories.js"></script>
 
-</body>
-</html>
+    if (!user) {
+
+        loading.textContent =
+            "You are not signed in. Taking you to Sign In...";
+
+        setTimeout(() => {
+
+            window.location.href =
+                "login.html";
+
+        }, 1000);
+
+        return;
+    }
+
+
+    // Load this user's stories
+    const {
+        data: stories,
+        error
+    } =
+        await supabaseClient
+            .from("stories")
+            .select("*")
+            .eq("author_id", user.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+    loading.hidden = true;
+
+
+    if (error) {
+
+        console.error(error);
+
+        errorMessage.textContent =
+            "We couldn't load your stories. Please try again.";
+
+        errorMessage.hidden = false;
+
+        return;
+    }
+
+
+    if (!stories || stories.length === 0) {
+
+        emptyMessage.hidden = false;
+
+    } else {
+
+        stories.forEach(story => {
+
+            const card =
+                document.createElement("article");
+
+            card.className =
+                "story-card";
+
+
+            const title =
+                document.createElement("h2");
+
+            title.textContent =
+                story.title || "Untitled Story";
+
+
+            const category =
+                document.createElement("p");
+
+            category.className =
+                "form-help";
+
+            category.textContent =
+                story.category
+                    ? `Category: ${story.category}`
+                    : "No category selected";
+
+
+            const status =
+                document.createElement("p");
+
+            status.className =
+                "form-help";
+
+            status.textContent =
+                `Status: ${story.status}`;
+
+
+            const date =
+                document.createElement("p");
+
+            date.className =
+                "form-help";
+
+            date.textContent =
+                `Saved: ${new Date(
+                    story.created_at
+                ).toLocaleDateString()}`;
+
+
+            // Read Story button
+            const readButton =
+                document.createElement("a");
+
+            readButton.href =
+                `view-story.html?id=${encodeURIComponent(story.id)}`;
+
+            readButton.className =
+                "button";
+
+            readButton.textContent =
+                "Read Story";
+
+
+            // Edit Story button
+            const editButton =
+                document.createElement("a");
+
+            editButton.href =
+                `tell-your-story.html?id=${encodeURIComponent(story.id)}`;
+
+            editButton.className =
+                "button button-light";
+
+            editButton.textContent =
+                "Edit Story";
+
+
+            card.appendChild(title);
+            card.appendChild(category);
+            card.appendChild(status);
+            card.appendChild(date);
+            card.appendChild(readButton);
+            card.appendChild(editButton);
+
+            storiesList.appendChild(card);
+
+        });
+
+    }
+
+
+    // Sign out
+    signOutBtn.addEventListener(
+        "click",
+        async () => {
+
+            signOutBtn.disabled = true;
+
+            signOutBtn.textContent =
+                "Signing Out...";
+
+
+            const {
+                error
+            } =
+                await supabaseClient.auth.signOut();
+
+
+            if (error) {
+
+                console.error(error);
+
+                signOutBtn.disabled =
+                    false;
+
+                signOutBtn.textContent =
+                    "Sign Out";
+
+                return;
+            }
+
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+});

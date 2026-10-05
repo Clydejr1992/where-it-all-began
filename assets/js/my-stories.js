@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "https://rdqtwuksydmyxgnxvipl.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
-        "YOUR_PUBLISHABLE_KEY_HERE";
+        "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
 
     const supabaseClient =
         window.supabase.createClient(

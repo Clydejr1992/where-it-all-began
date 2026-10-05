@@ -1,224 +1,123 @@
-document.addEventListener("DOMContentLoaded", async () => {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const SUPABASE_URL =
-        "https://rdqtwuksydmyxgnxvipl.supabase.co";
+    <title>My Stories | Where It All Began</title>
 
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO";
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
+<body>
 
+<header class="site-header">
+    <div class="container header-inner">
 
-    const loading =
-        document.getElementById("loading");
+        <a href="index.html" class="site-logo">
+            Where It All Began
+        </a>
 
-    const storiesList =
-        document.getElementById("storiesList");
+        <nav class="site-nav">
+            <a href="index.html">Home</a>
+            <a href="tell-your-story.html">Tell Your Story</a>
+            <a href="my-stories.html">My Stories</a>
+            <a href="stories.html">Stories</a>
+        </nav>
 
-    const emptyMessage =
-        document.getElementById("emptyMessage");
+    </div>
+</header>
 
-    const errorMessage =
-        document.getElementById("errorMessage");
 
-    const signOutBtn =
-        document.getElementById("signOutBtn");
+<main>
 
+<section class="page-hero">
+    <div class="container">
 
-    // Get the saved login session
-    const {
-        data: {
-            session
-        }
-    } = await supabaseClient.auth.getSession();
+        <p class="eyebrow">Your memories. Your story.</p>
 
+        <h1>My Stories</h1>
 
-    const user = session?.user;
+        <p>
+            View the stories and drafts you have saved.
+        </p>
 
+    </div>
+</section>
 
-    if (!user) {
 
-        loading.textContent =
-            "You are not signed in. Taking you to Sign In...";
+<section class="section">
 
-        setTimeout(() => {
+    <div class="container narrow">
 
-            window.location.href =
-                "login.html";
+        <div id="loading">
+            Loading your stories...
+        </div>
 
-        }, 1000);
+        <div id="storiesList"></div>
 
-        return;
-    }
+        <p
+            id="emptyMessage"
+            class="form-help"
+            hidden
+        >
+            You haven't saved any stories yet.
+        </p>
 
+        <p
+            id="errorMessage"
+            class="form-help"
+            hidden
+        ></p>
 
-    // Load this user's stories
-    const {
-        data: stories,
-        error
-    } =
-        await supabaseClient
-            .from("stories")
-            .select("*")
-            .eq("author_id", user.id)
-            .order("created_at", {
-                ascending: false
-            });
+        <div class="form-actions">
 
+            <a
+                href="tell-your-story.html"
+                class="button"
+            >
+                Tell a New Story
+            </a>
 
-    loading.hidden = true;
+            <button
+                type="button"
+                class="button button-light"
+                id="signOutBtn"
+            >
+                Sign Out
+            </button>
 
+        </div>
 
-    if (error) {
+    </div>
 
-        console.error(error);
+</section>
 
-        errorMessage.textContent =
-            "We couldn't load your stories. Please try again.";
+</main>
 
-        errorMessage.hidden = false;
 
-        return;
-    }
+<footer class="site-footer">
 
+    <div class="container">
 
-    if (!stories || stories.length === 0) {
+        <p>
+            © 2026 Where It All Began
+        </p>
 
-        emptyMessage.hidden = false;
+        <p>
+            <a href="privacy.html">Privacy</a>
+            &nbsp; | &nbsp;
+            <a href="terms.html">Terms</a>
+        </p>
 
-    } else {
+    </div>
 
-        stories.forEach(story => {
+</footer>
 
-            const card =
-                document.createElement("article");
 
-            card.className =
-                "story-card";
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script src="assets/js/my-stories.js"></script>
 
-            const title =
-                document.createElement("h2");
-
-            title.textContent =
-                story.title || "Untitled Story";
-
-
-            const category =
-                document.createElement("p");
-
-            category.className =
-                "form-help";
-
-            category.textContent =
-                story.category
-                    ? `Category: ${story.category}`
-                    : "No category selected";
-
-
-            const status =
-                document.createElement("p");
-
-            status.className =
-                "form-help";
-
-            status.textContent =
-                `Status: ${story.status}`;
-
-
-            const date =
-                document.createElement("p");
-
-            date.className =
-                "form-help";
-
-            date.textContent =
-                `Saved: ${new Date(
-                    story.created_at
-                ).toLocaleDateString()}`;
-
-
-            // Read Story button
-            const readButton =
-                document.createElement("a");
-
-            readButton.href =
-                `view-story.html?id=${encodeURIComponent(story.id)}`;
-
-            readButton.className =
-                "button";
-
-            readButton.textContent =
-                "Read Story";
-
-
-            // Edit Story button
-            const editButton =
-                document.createElement("a");
-
-            editButton.href =
-                `tell-your-story.html?id=${encodeURIComponent(story.id)}`;
-
-            editButton.className =
-                "button button-light";
-
-            editButton.textContent =
-                "Edit Story";
-
-
-            card.appendChild(title);
-            card.appendChild(category);
-            card.appendChild(status);
-            card.appendChild(date);
-            card.appendChild(readButton);
-            card.appendChild(editButton);
-
-            storiesList.appendChild(card);
-
-        });
-
-    }
-
-
-    // Sign out
-    signOutBtn.addEventListener(
-        "click",
-        async () => {
-
-            signOutBtn.disabled = true;
-
-            signOutBtn.textContent =
-                "Signing Out...";
-
-
-            const {
-                error
-            } =
-                await supabaseClient.auth.signOut();
-
-
-            if (error) {
-
-                console.error(error);
-
-                signOutBtn.disabled =
-                    false;
-
-                signOutBtn.textContent =
-                    "Sign Out";
-
-                return;
-            }
-
-
-            window.location.href =
-                "login.html";
-
-        }
-    );
-
-});
+</body>
+</html>

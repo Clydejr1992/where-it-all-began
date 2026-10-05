@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     const form = document.getElementById("storyForm");
 
@@ -56,6 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const storageKey =
         "whereItAllBeganStoryDraft";
+
+
+    /* CHECK FOR EDIT MODE */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const editingStoryId =
+        params.get("id");
 
 
     /* LOAD LOCAL DRAFT */
@@ -158,6 +169,197 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         return data;
+
+    }
+
+
+    /* FILL FORM FROM SAVED STORY */
+
+    function fillForm(data) {
+
+        Object.entries(data).forEach(
+            ([name, value]) => {
+
+                const element =
+                    form.elements[name];
+
+                if (!element) return;
+
+
+                if (
+                    name === "topics" &&
+                    topics
+                ) {
+
+                    const selectedTopics =
+                        Array.isArray(value)
+                            ? value
+                            : [value];
+
+
+                    [
+                        ...topics.options
+                    ].forEach(option => {
+
+                        option.selected =
+                            selectedTopics.includes(
+                                option.value
+                            );
+
+                    });
+
+
+                    return;
+
+                }
+
+
+                if (
+                    element.type === "checkbox"
+                ) {
+
+                    element.checked =
+                        Boolean(value);
+
+                    return;
+
+                }
+
+
+                element.value =
+                    value ?? "";
+
+            }
+        );
+
+    }
+
+
+    /* LOAD STORY FOR EDITING */
+
+    async function loadStoryForEditing() {
+
+        if (!editingStoryId)
+            return;
+
+
+        status.textContent =
+            "Loading your story...";
+
+
+        try {
+
+            const {
+                data: userData,
+                error: userError
+            } =
+                await supabaseClient.auth.getUser();
+
+
+            if (userError)
+                throw userError;
+
+
+            const user =
+                userData.user;
+
+
+            if (!user) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const {
+                data: story,
+                error
+            } =
+                await supabaseClient
+                    .from("stories")
+                    .select("*")
+                    .eq("id", editingStoryId)
+                    .eq("author_id", user.id)
+                    .single();
+
+
+            if (error)
+                throw error;
+
+
+            if (!story) {
+
+                throw new Error(
+                    "Story not found."
+                );
+
+            }
+
+
+            let savedData = {};
+
+
+            try {
+
+                savedData =
+                    JSON.parse(
+                        story.content || "{}"
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to read saved story content.",
+                    error
+                );
+
+            }
+
+
+            fillForm(savedData);
+
+
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(savedData)
+            );
+
+
+            if (save) {
+
+                save.textContent =
+                    "Save Changes";
+
+            }
+
+
+            status.textContent =
+                "Your saved story has been loaded for editing.";
+
+
+        } catch (error) {
+
+            console.error(
+                "Load story error:",
+                error
+            );
+
+
+            status.textContent =
+                "We couldn't load that story for editing.";
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "my-stories.html";
+
+            }, 2000);
+
+        }
 
     }
 
@@ -337,16 +539,20 @@ document.addEventListener("DOMContentLoaded", () => {
         save.disabled = true;
 
         save.textContent =
-            "Saving...";
+            editingStoryId
+                ? "Saving Changes..."
+                : "Saving...";
 
 
         status.textContent =
-            "Saving your story...";
+            editingStoryId
+                ? "Updating your story..."
+                : "Saving your story...";
 
 
         try {
 
-            /* GET THE CURRENT SIGNED-IN USER */
+            /* GET CURRENT SIGNED-IN USER */
 
             const {
                 data: userData,
@@ -375,64 +581,131 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /* SAVE STORY */
+            /* EDIT EXISTING STORY */
 
-            const {
-                data: result,
-                error
-            } =
-                await supabaseClient
-                    .from("stories")
-                    .insert({
+            if (editingStoryId) {
 
-                        author_id:
-                            user.id,
+                const {
+                    data: result,
+                    error
+                } =
+                    await supabaseClient
+                        .from("stories")
+                        .update({
 
-                        title:
-                            data.name
-                                ? `${data.name}'s Story`
-                                : "Untitled Story",
+                            title:
+                                data.name
+                                    ? `${data.name}'s Story`
+                                    : "Untitled Story",
 
-                        content:
-                            JSON.stringify(data),
+                            content:
+                                JSON.stringify(data),
 
-                        category:
-                            data.category || null,
+                            category:
+                                data.category || null,
 
-                        topics:
-                            data.topics || [],
+                            topics:
+                                data.topics || [],
 
-                        status:
-                            "draft"
+                            updated_at:
+                                new Date().toISOString()
 
-                    })
-                    .select()
-                    .single();
+                        })
+                        .eq(
+                            "id",
+                            editingStoryId
+                        )
+                        .eq(
+                            "author_id",
+                            user.id
+                        )
+                        .select()
+                        .single();
 
 
-            if (error) {
+                if (error) {
 
-                throw error;
+                    throw error;
+
+                }
+
+
+                localStorage.setItem(
+                    storageKey,
+                    JSON.stringify(data)
+                );
+
+
+                status.textContent =
+                    "Your story has been updated successfully.";
+
+
+                console.log(
+                    "Updated Supabase story:",
+                    result
+                );
+
+
+            } else {
+
+                /* CREATE NEW STORY */
+
+                const {
+                    data: result,
+                    error
+                } =
+                    await supabaseClient
+                        .from("stories")
+                        .insert({
+
+                            author_id:
+                                user.id,
+
+                            title:
+                                data.name
+                                    ? `${data.name}'s Story`
+                                    : "Untitled Story",
+
+                            content:
+                                JSON.stringify(data),
+
+                            category:
+                                data.category || null,
+
+                            topics:
+                                data.topics || [],
+
+                            status:
+                                "draft"
+
+                        })
+                        .select()
+                        .single();
+
+
+                if (error) {
+
+                    throw error;
+
+                }
+
+
+                localStorage.setItem(
+                    storageKey,
+                    JSON.stringify(data)
+                );
+
+
+                status.textContent =
+                    "Your story draft has been saved successfully.";
+
+
+                console.log(
+                    "Supabase story:",
+                    result
+                );
 
             }
-
-
-            /* KEEP LOCAL COPY TOO */
-
-            localStorage.setItem(
-                storageKey,
-                JSON.stringify(data)
-            );
-
-
-            status.textContent =
-                "Your story draft has been saved successfully.";
-
-
-            console.log(
-                "Supabase story:",
-                result
-            );
 
 
         } catch (error) {
@@ -452,7 +725,9 @@ document.addEventListener("DOMContentLoaded", () => {
         save.disabled = false;
 
         save.textContent =
-            "Save My Story Draft";
+            editingStoryId
+                ? "Save Changes"
+                : "Save My Story Draft";
 
     };
 
@@ -460,5 +735,10 @@ document.addEventListener("DOMContentLoaded", () => {
     /* START */
 
     render();
+
+
+    /* LOAD EDITING STORY AFTER FORM IS READY */
+
+    await loadStoryForEditing();
 
 });

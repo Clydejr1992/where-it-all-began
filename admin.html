@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | Where It All Began</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body>
+<header><div class="container header-inner"><a class="logo" href="index.html">Where It All Began</a><nav><a href="index.html">View Site</a><button id="logout" class="text-button">Sign Out</button></nav></div></header>
+<main><section class="page-hero"><div class="container"><p class="eyebrow">Your publishing dashboard</p><h1>Admin Dashboard</h1><p>Create, edit and publish your stories and videos.</p></div></section>
+<section class="section"><div class="container"><p id="authStatus">Checking account...</p>
+<div id="dashboard" hidden>
+<div class="tabs"><button class="tab active" data-target="storiesPanel">Stories</button><button class="tab" data-target="videosPanel">Videos</button></div>
+<section id="storiesPanel"><div class="toolbar"><h2>Stories</h2><button id="newStory" class="button">New Story</button></div><div id="storyList"></div></section>
+<section id="videosPanel" hidden><div class="toolbar"><h2>Videos</h2><button id="newVideo" class="button">New Video</button></div><div id="videoList"></div></section>
+
+<section id="storyEditor" class="card editor" hidden><h2 id="storyHeading">New Story</h2>
+<form id="storyForm">
+<input id="storyId" type="hidden">
+<label>Title<input id="storyTitle" required></label>
+<label>Short Description<textarea id="storyExcerpt" rows="3"></textarea></label>
+<label>Category<select id="storyCategory"><option value="">Choose a category</option><option>Family & Childhood</option><option>Love & Relationships</option><option>Places & Home</option><option>Life Challenges</option><option>Work & Accomplishments</option><option>Life Lessons</option><option>Community & Service</option><option>Memories & Moments</option><option>Legacy & Looking Back</option><option>Just My Story</option></select></label>
+<label>Topics<input id="storyTopics" placeholder="childhood, father, hometown"></label>
+<label>Story<textarea id="storyContent" rows="18" required></textarea></label>
+<label>Featured Image URL<input id="storyImage" type="url"></label>
+<label>Status<select id="storyStatus"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+<div class="actions"><button class="button" type="submit">Save Story</button><button id="cancelStory" class="button light" type="button">Cancel</button></div><p id="storyMsg" class="muted"></p>
+</form></section>
+
+<section id="videoEditor" class="card editor" hidden><h2 id="videoHeading">New Video</h2>
+<form id="videoForm">
+<input id="videoId" type="hidden">
+<label>Video Title<input id="videoTitle" required></label>
+<label>Description<textarea id="videoDescription" rows="5"></textarea></label>
+<label>Category<select id="videoCategory"><option value="">Choose a category</option><option>Family & Childhood</option><option>Love & Relationships</option><option>Places & Home</option><option>Life Challenges</option><option>Work & Accomplishments</option><option>Life Lessons</option><option>Community & Service</option><option>Memories & Moments</option><option>Legacy & Looking Back</option><option>Just My Story</option></select></label>
+<label>Topics<input id="videoTopics" placeholder="interview, childhood, hometown"></label>
+<label>Video File<input id="videoFile" type="file" accept="video/*"></label>
+<p class="muted">For a new video, choose a file. When editing, leave it blank to keep the current video.</p>
+<label>Thumbnail URL<input id="videoThumbnail" type="url"></label>
+<label>Status<select id="videoStatus"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+<div class="actions"><button class="button" type="submit">Save Video</button><button id="cancelVideo" class="button light" type="button">Cancel</button></div><p id="videoMsg" class="muted"></p>
+</form></section>
+</div></div></section></main>
+<footer><div class="container">© 2026 Where It All Began</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/config.js"></script><script src="assets/js/admin.js"></script>
+</body></html>

@@ -1,4 +1,4 @@
 window.WIB_CONFIG = {
     supabaseUrl: "https://rdqtwuksydmyxgnxvipl.supabase.co",
-    supabasePublishableKey: "PASTE YOUR EXISTING SUPABASE PUBLISHABLE KEY HERE"
+    supabasePublishableKey: "sb_publishable_E9357c8Z3hxAgOqWGJFGVw_XpKXtlCO"
 };

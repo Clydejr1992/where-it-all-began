@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Submit Your Story | Where It All Began</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body>
+<header><div class="container header-inner"><a class="logo" href="index.html">Where It All Began</a><nav><a href="stories.html">Stories</a><a href="videos.html">Videos</a><a href="submit-story.html">Submit Your Story</a><a href="login.html">Admin</a></nav></div></header>
+<main><section class="page-hero"><div class="container"><p class="eyebrow">Your story matters</p><h1>Submit Your Story</h1><p>Share your memories, experiences and life lessons. Every submission is reviewed before it can be published.</p></div></section>
+<section class="section"><div class="container"><div class="card editor"><form id="submissionForm">
+<label>Your Name<input id="name" required maxlength="120"></label>
+<label>Email <span class="muted">(optional)</span><input id="email" type="email" maxlength="254"></label>
+<label>Story Title<input id="title" required maxlength="200"></label>
+<label>Category<select id="category"><option value="">Choose a category</option><option>Family & Childhood</option><option>Love & Relationships</option><option>Places & Home</option><option>Life Challenges</option><option>Work & Accomplishments</option><option>Life Lessons</option><option>Community & Service</option><option>Memories & Moments</option><option>Legacy & Looking Back</option><option>Just My Story</option></select></label>
+<label>Topics <span class="muted">(optional)</span><input id="topics" maxlength="300" placeholder="childhood, father, hometown"></label>
+<label>Your Story<textarea id="content" rows="18" required maxlength="50000"></textarea></label>
+<label class="checkbox"><input id="permission" type="checkbox" required> I give Where It All Began permission to review and, if approved, publish my story.</label>
+<input id="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+<div class="actions"><button class="button" type="submit">Submit My Story</button></div><p id="msg" class="muted"></p>
+</form></div></div></section></main>
+<footer><div class="container">© 2026 Where It All Began</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/config.js"></script><script src="assets/js/submit-story.js"></script>
+</body></html>

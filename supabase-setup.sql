@@ -3,6 +3,7 @@
 alter table public.stories add column if not exists excerpt text;
 alter table public.stories add column if not exists featured_image_url text;
 alter table public.stories add column if not exists published_at timestamptz;
+alter table public.stories add column if not exists author_display_name text;
 
 create table if not exists public.videos (
     id uuid primary key default gen_random_uuid(), author_id uuid references public.profiles(id) on delete set null,
@@ -54,6 +55,7 @@ create table if not exists public.story_submissions (
     photo_url text,
     video_url text,
     permission boolean not null default false,
+    anonymous boolean not null default false,
     status text not null default 'pending',
     submitted_at timestamptz not null default now(),
     reviewed_at timestamptz,
@@ -68,3 +70,30 @@ drop policy if exists "Admins can update story submissions" on public.story_subm
 create policy "Admins can update story submissions" on public.story_submissions for update to authenticated using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "Admins can delete story submissions" on public.story_submissions;
 create policy "Admins can delete story submissions" on public.story_submissions for delete to authenticated using (public.is_admin());
+
+
+-- ANONYMOUS STORY SUBMISSIONS
+alter table public.story_submissions add column if not exists anonymous boolean not null default false;
+drop policy if exists "Anyone can submit stories" on public.story_submissions;
+create policy "Anyone can submit stories" on public.story_submissions
+for insert to anon, authenticated
+with check (status = 'pending' and permission = true and email is not null and btrim(email) <> '');
+
+create or replace function public.publish_story_submission(submission_id uuid)
+returns public.story_submissions
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare submission public.story_submissions;
+begin
+    if not public.is_admin() then raise exception 'Not authorized'; end if;
+    select * into submission from public.story_submissions where id = submission_id and status = 'pending' for update;
+    if not found then raise exception 'Submission not found or already reviewed'; end if;
+    insert into public.stories (author_id, author_display_name, title, content, category, topics, status, published_at)
+    values (auth.uid(), case when submission.anonymous then 'Anonymous' else submission.name end, submission.title, submission.content, submission.category, submission.topics, 'published', now());
+    update public.story_submissions set status = 'approved', reviewed_at = now(), reviewed_by = auth.uid() where id = submission_id returning * into submission;
+    return submission;
+end;
+$$;
+grant execute on function public.publish_story_submission(uuid) to authenticated;

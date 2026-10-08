@@ -1,25 +1,30 @@
-/* Reliable storytelling background: one layer on the page area between header and footer. */
+/* Storytelling background: one reliable image layer between header and footer. */
 main{
   position:relative;
-  background:
-    linear-gradient(rgba(246,241,232,.58),rgba(246,241,232,.58)),
-    url("../images/storytelling-background-cropped.webp") center top / cover no-repeat;
-  background-attachment:scroll;
-}
-
-/* Disable the older pseudo-element version so it cannot cover the real background. */
-main::before{
-  display:none!important;
-  content:none!important;
-}
-
-.hero,.page-hero,.section{
+  overflow:hidden;
   background:transparent!important;
 }
 
+.storytelling-bg{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center top!important;
+  opacity:.42!important;
+  display:block!important;
+  z-index:0!important;
+  pointer-events:none!important;
+}
+
+main::before{display:none!important;content:none!important;}
+.hero,.page-hero,.section{background:transparent!important;}
+.hero,.page-hero,.section,.hero .container,.page-hero .container{position:relative;}
+.hero,.page-hero,.section{z-index:1;}
+.hero .container,.page-hero .container{z-index:2;}
+
 @media(max-width:800px){
-  main{
-    background-position:center top;
-    background-size:auto 100%;
-  }
+  .storytelling-bg{object-position:center top!important;}
 }

@@ -1,0 +1,17 @@
+/* Reliable storytelling background fix. */
+main{
+  background-image:
+    linear-gradient(rgba(246,241,232,.58),rgba(246,241,232,.58)),
+    url("../images/storytelling-background-cropped.webp");
+  background-repeat:no-repeat;
+  background-position:center top;
+  background-size:cover;
+  background-attachment:scroll;
+}
+.hero,.page-hero,.section{background:transparent!important;}
+@media(max-width:800px){
+  main{
+    background-position:center top;
+    background-size:auto 100%;
+  }
+}

@@ -11,3 +11,6 @@ header,.site-header,.section,.site-footer,footer{position:relative;z-index:10}
 .hero,.page-hero{z-index:1}
 .hero .container,.page-hero .container{z-index:10}
 
+
+/* Temporarily hide the decorative hero logo while preserving its exact position and sizing for later restoration. */
+.hero-logo{visibility:hidden!important;opacity:0!important;}

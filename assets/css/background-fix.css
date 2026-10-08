@@ -1,14 +1,22 @@
-/* Reliable storytelling background fix. */
+/* Reliable storytelling background: one layer on the page area between header and footer. */
 main{
-  background-image:
+  position:relative;
+  background:
     linear-gradient(rgba(246,241,232,.58),rgba(246,241,232,.58)),
-    url("../images/storytelling-background-cropped.webp");
-  background-repeat:no-repeat;
-  background-position:center top;
-  background-size:cover;
+    url("../images/storytelling-background-cropped.webp") center top / cover no-repeat;
   background-attachment:scroll;
 }
-.hero,.page-hero,.section{background:transparent!important;}
+
+/* Disable the older pseudo-element version so it cannot cover the real background. */
+main::before{
+  display:none!important;
+  content:none!important;
+}
+
+.hero,.page-hero,.section{
+  background:transparent!important;
+}
+
 @media(max-width:800px){
   main{
     background-position:center top;

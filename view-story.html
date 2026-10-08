@@ -3,128 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>View Story | Where It All Began</title>
-
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-
 <body>
-
 <header class="site-header">
     <div class="container header-inner">
-
-        <a href="index.html" class="site-logo">
-            Where It All Began
-        </a>
-
+        <a href="index.html" class="site-logo">Where It All Began</a>
         <nav class="site-nav">
             <a href="index.html">Home</a>
             <a href="tell-your-story.html">Tell Your Story</a>
             <a href="my-stories.html">My Stories</a>
             <a href="stories.html">Stories</a>
         </nav>
-
     </div>
 </header>
-
-
 <main>
-
 <section class="page-hero">
     <div class="container">
-
         <p class="eyebrow">Your story</p>
-
-        <h1 id="storyTitle">
-            Loading Story...
-        </h1>
-
-        <p id="storyDetails">
-            Loading...
-        </p>
-
+        <h1 id="storyTitle">Loading Story...</h1>
+        <p id="storyDetails">Loading...</p>
     </div>
 </section>
-
-
 <section class="section">
-
     <div class="container narrow">
-
-        <div id="loading">
-            Loading your story...
-        </div>
-
-        <article
-            id="storyContent"
-            class="story-content"
-            hidden
-        >
-
-            <div
-                id="storyText"
-                class="story-text"
-            ></div>
-
+        <div id="loading">Loading your story...</div>
+        <article id="storyContent" class="story-content" hidden>
+            <div id="storyText" class="story-text"></div>
         </article>
-
-
-        <p
-            id="errorMessage"
-            class="form-help"
-            hidden
-        ></p>
-
-
+        <p id="errorMessage" class="form-help" hidden></p>
         <div class="form-actions">
-
-            <a
-                href="my-stories.html"
-                class="button button-light"
-            >
-                Back to My Stories
-            </a>
-
-            <button
-                type="button"
-                class="button"
-                id="signOutBtn"
-            >
-                Sign Out
-            </button>
-
+            <a href="my-stories.html" class="button button-light">Back to My Stories</a>
+            <button type="button" class="button" id="signOutBtn">Sign Out</button>
         </div>
-
     </div>
-
 </section>
-
 </main>
-
-
 <footer class="site-footer">
-
     <div class="container">
-
-        <p>
-            © 2026 Where It All Began
-        </p>
-
-        <p>
-            <a href="privacy.html">Privacy</a>
-            &nbsp; | &nbsp;
-            <a href="terms.html">Terms</a>
-        </p>
-
+        <p>© 2026 Where It All Began</p>
+        <p><a href="privacy.html">Privacy</a> &nbsp; | &nbsp; <a href="terms.html">Terms</a></p>
     </div>
-
 </footer>
-
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<script src="assets/js/config.js"></script>
 <script src="assets/js/view-story.js"></script>
-
 </body>
 </html>

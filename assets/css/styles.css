@@ -20,5 +20,6 @@ header,.site-header,.section,.site-footer,footer{position:relative;z-index:10}
 
 /* Storytelling photo: visible only in the area between header and footer. */
 main{position:relative;isolation:isolate;overflow:hidden}
-main::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(246,241,232,.72),rgba(246,241,232,.72)),url("../images/storytelling-background.webp") center center/cover no-repeat;z-index:-1;pointer-events:none}
+main::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(246,241,232,.72),rgba(246,241,232,.72)),url("../images/storytelling-background-cropped.webp") center center/cover no-repeat;z-index:0;pointer-events:none}
+main>*{position:relative;z-index:1}
 @media(max-width:800px){main::before{background-position:center center}}

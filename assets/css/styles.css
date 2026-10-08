@@ -14,3 +14,6 @@ header,.site-header,.section,.site-footer,footer{position:relative;z-index:10}
 
 /* Temporarily hide the decorative hero logo while preserving its exact position and sizing for later restoration. */
 .hero-logo{visibility:hidden!important;opacity:0!important;}
+
+/* Logo removed from site. */
+.hero-logo,.logo,.brand,.site-logo{display:none!important;}
